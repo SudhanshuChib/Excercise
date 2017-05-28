@@ -1,0 +1,98 @@
+#Importing libraries
+import json
+from pandas.io.json import json_normalize
+import pandas as pd
+
+
+#Loading JSON data as string
+data1=json.load((open("C:\\Users\\sudhanshu\\Desktop\\Springboard\\JSON\\data_wrangling_json\\data\\world_bank_projects.json")))
+
+#Normalizing json data
+test=json_normalize(data1)
+
+#Ques1: Find the 10 countries with most projects
+test.groupby("countryname").size().sort_values(ascending=False).head(10)
+
+"""
+countryname
+People's Republic of China         19
+Republic of Indonesia              19
+Socialist Republic of Vietnam      17
+Republic of India                  16
+Republic of Yemen                  13
+Nepal                              12
+People's Republic of Bangladesh    12
+Kingdom of Morocco                 12
+Africa                             11
+Republic of Mozambique             11
+
+"""
+
+#Ques2: Find the top 10 major project themes (using column 'mjtheme_namecode')
+test1=json_normalize(data1,"mjtheme_namecode")
+test1.groupby(["code","name"]).size().sort_values(ascending=False).head(10)
+
+"""
+code  name                                        
+11    Environment and natural resources management    223
+10    Rural development                               202
+8     Human development                               197
+2     Public sector governance                        184
+6     Social protection and risk management           158
+4     Financial and private sector development        130
+7     Social dev/gender/inclusion                     119
+5     Trade and integration                            72
+9     Urban development                                47
+1     Economic management                              33
+"""
+
+#Ques3: Create a dataframe with the missing names filled in.
+
+#Creating a new dataframe
+test2=test1
+
+#Coding missing values  
+for i in range(0,1499):
+    if test2.loc[i, "code"]=="11":
+        test2.loc[i, "name"] = "Environment and natural resources management"
+    elif test2.loc[i, "code"]=="10":
+        test2.loc[i, "name"] = "Rural development"
+    elif test2.loc[i, "code"]=="8":
+        test2.loc[i, "name"] = "Human development"
+    elif test2.loc[i, "code"]=="2":
+        test2.loc[i, "name"] = "Public sector governance"
+    elif test2.loc[i, "code"]=="6":
+        test2.loc[i, "name"] = "Social protection and risk management"
+    elif test2.loc[i, "code"]=="4":
+        test2.loc[i, "name"] = "Financial and private sector development"
+    elif test2.loc[i, "code"]=="7":
+        test2.loc[i, "name"] = "Social dev/gender/inclusion"
+    elif test2.loc[i, "code"]=="5":
+        test2.loc[i, "name"] = "Trade and integration"
+    elif test2.loc[i, "code"]=="5":
+        test2.loc[i, "name"] = "Trade and integration"
+    elif test2.loc[i, "code"]=="9":
+        test2.loc[i, "name"] = "Urban development"
+    elif test2.loc[i, "code"]=="1":
+        test2.loc[i, "name"] = "Economic management"
+    elif test2.loc[i, "code"]=="3":
+        test2.loc[i, "name"] = "Rule of law"
+
+#Displaying data
+test2.groupby(["code","name"]).size().sort_values(ascending=False)
+
+"""
+code  name                                        
+11    Environment and natural resources management    250
+10    Rural development                               216
+8     Human development                               210
+2     Public sector governance                        199
+6     Social protection and risk management           168
+4     Financial and private sector development        146
+7     Social dev/gender/inclusion                     130
+5     Trade and integration                            77
+9     Urban development                                50
+1     Economic management                              38
+3     Rule of law                                      15
+
+"""
