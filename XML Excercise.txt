@@ -1,0 +1,109 @@
+
+######################################################################################################################################
+
+# Ques1: Top 10 countries with the lowest infant mortality rates
+
+#Loading libraries
+from xml.etree import ElementTree as ET
+import pandas as pd
+    
+#Reading in data 
+dataXML= ET.parse("C:\\Users\\sudhanshu\\Desktop\\Springboard\\XML\\data_wrangling_xml\\data\\mondial_database.xml" )  
+root=dataXML.getroot()    
+#root.tag
+#root.attrib
+
+#Declaring a dataframe to store values
+newDF = pd.DataFrame()
+#Setting iterator
+i=0
+
+#Looping over data to find countries and their respective infant mortality rates
+for child in root.findall("country"):
+    try:
+        newDF.loc[i,"Country"] = child.find('name').text
+        newDF.loc[i,"Infant_Mortality"] = child.find('infant_mortality').text
+        i = i + 1
+    except AttributeError: 
+        newDF.loc[i,"Infant_Mortality"]="NotFound"
+        i = i + 1
+        continue
+    
+#Sorting data on infant mortality rates
+newDF.sort_values("Infant_Mortality", ascending=True).head(10)
+
+'''
+Answer:
+Country            Infant_Mortality
+Monaco                 1.81
+Romania               10.16
+Fiji                  10.2
+Brunei                10.48
+Grenada               10.5
+Mauritius             10.59
+Panama                10.7
+Seychelles            10.77
+United Arab Emirates  10.92
+Barbados              10.93       
+'''
+
+######################################################################################################################################
+
+# Ques2: Top 10 cities with the largest population
+
+#Loading libraries
+from xml.etree import ElementTree as ET
+import pandas as pd
+    
+#Reading in data 
+dataXML= ET.parse("C:\\Users\\sudhanshu\\Desktop\\Springboard\\XML\\data_wrangling_xml\\data\\mondial_database.xml" )  
+root=dataXML.getroot()    
+#root.tag
+#root.attrib
+
+#Declaring a dataframe to store values
+newDF = pd.DataFrame()
+#Setting iterator
+i=0
+
+#Looping over data to find Cites and their respective population as per 2011 census
+
+for child in root.findall("country"):
+    for child1 in child.findall("city"):
+        try:
+            newDF.loc[i,"City_Name"] = child1.find('name').text
+            newDF.loc[i,"Population"] = child1.find('population[@year="2011"]').text
+            i = i + 1
+        except AttributeError: 
+            newDF.loc[i,"Population"]="NotFound"
+            i = i + 1
+            continue
+
+#Subsetting Dataframe to remove "NotFound"        
+newDF1=newDF[newDF.Population != "NotFound"]
+
+#Changing the data type to integer for the population column
+newDF1.Population = newDF1.Population. astype(int)
+
+#Output of 10 most populated cities   
+print(newDF1.sort_values("Population", ascending=False).head(10))
+
+'''
+Answer:
+    
+City_Name	Population
+Beograd	1639121
+Montevideo	1318755
+Sofia	1270284
+Yerevan	1060138
+Kathmandu	1003285
+Zagreb	686568
+Kingston	662426
+Rīga	658640
+Vilnius	535631
+Dublin	525383
+       
+'''
+
+######################################################################################################################################
+
